@@ -1,0 +1,6 @@
+# Rapports datés (régénérés) — on garde un exemple versionné
+output/reporting_ecarts_*.xlsx
+
+# Python
+__pycache__/
+.venv/

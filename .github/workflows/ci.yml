@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  reporting-ecarts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: projet-15
+
+      # Ce reporting part de la base du Projet 07 (même compte, port 5433) — voir README.
+      - name: Récupérer la base du Projet 07
+        uses: actions/checkout@v4
+        with:
+          repository: valentinratigniet-byte/projet-07-base-ecommerce
+          path: projet-07
+
+      - name: Démarrer PostgreSQL (Projet 07)
+        working-directory: projet-07
+        run: docker compose up -d
+
+      - name: Attendre que la base soit prête
+        run: |
+          for i in $(seq 1 20); do
+            docker exec p07_ecommerce_db pg_isready -U portfolio -d ecommerce && exit 0
+            sleep 2
+          done
+          echo "Postgres jamais devenu ready" >&2
+          exit 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Peupler la base source (Faker)
+        working-directory: projet-07
+        run: |
+          pip install -r seed/requirements.txt
+          python seed/seed.py
+
+      - name: Installer les dépendances du reporting
+        working-directory: projet-15
+        run: pip install -r requirements.txt
+
+      - name: Créer la table Budget
+        run: docker exec -i p07_ecommerce_db psql -U portfolio -d ecommerce < projet-15/sql/01_budget_schema.sql
+
+      - name: Générer le Budget puis le rapport d'écarts (asserts d'identité inclus)
+        working-directory: projet-15
+        run: |
+          python src/generate_budget.py
+          python src/variance_report.py
