@@ -4,3 +4,6 @@ output/reporting_ecarts_*.xlsx
 # Python
 __pycache__/
 .venv/
+
+# Sortie locale de /graphify (exploration perso, pas versionnee)
+graphify-out/
