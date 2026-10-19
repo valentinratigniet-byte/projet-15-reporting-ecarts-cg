@@ -20,6 +20,8 @@ mensuel.
 
 ## 🗂️ Architecture
 
+🗺️ **[Schéma du dépôt (GitDiagram)](https://gitdiagram.com/valentinratigniet-byte/projet-15-reporting-ecarts-cg)** : vue d'ensemble générée automatiquement à partir du code.
+
 ```mermaid
 flowchart LR
     A["Projet 07 (PostgreSQL)\norders / order_item / category"] --> B["generate_budget.py\n+ table budget_category_month"]
