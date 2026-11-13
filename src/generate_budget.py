@@ -35,6 +35,7 @@ def main() -> None:
         JOIN category c ON c.id = pr.category_id
         WHERE date_trunc('month', o.order_date) < date_trunc('month', now())
         GROUP BY 1, 2
+        ORDER BY 1, 2  -- le bruit est tiré ligne par ligne : sans ordre fixe, le budget change d'une exécution à l'autre
     """)
     actuals = cur.fetchall()
 
